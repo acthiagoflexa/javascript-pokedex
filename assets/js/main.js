@@ -83,24 +83,29 @@ loadMoreButton.addEventListener('click', () => {
 })
 
 document.addEventListener('click', (event) => {
-    const clickedPokemon = event.target.closest('.pokemon');
-    if (clickedPokemon) {
-        // Obtenha o nome do Pokémon clicado
-        const pokemonName = clickedPokemon.querySelector('.name').textContent;
-        
-        // Obtenha os detalhes do Pokémon pelo nome
-        pokeApi.getPokemonInfoByName(pokemonName).then((pokemon) => {
-            // Crie a div gerada pelo convertPokemonToDi
-            console.log(pokemon);
-            const pokemonDetailsDiv = document.createElement('div');
-            pokemonDetailsDiv.innerHTML = convertPokemonToDi(pokemon);
-            
-            // Adicione a div à nova tela ou ao elemento em tela cheia
-            // Neste exemplo, estamos adicionando à tela cheia
-            document.body.appendChild(pokemonDetailsDiv);
-        });
-    }
+  const clickedPokemon = event.target.closest('.pokemon');
+  if (clickedPokemon) {
+      // Obtenha o nome do Pokémon clicado
+      const pokemonName = clickedPokemon.querySelector('.name').textContent;
+
+      // Oculte a seção de conteúdo
+      const contentSection = document.querySelector('.content');
+      contentSection.style.display = 'none';
+      
+      // Obtenha os detalhes do Pokémon pelo nome
+      pokeApi.getPokemonInfoByName(pokemonName).then((pokemon) => {
+          // Crie a div gerada pelo convertPokemonToDi
+          console.log(pokemon);
+          const pokemonDetailsDiv = document.createElement('div');
+          pokemonDetailsDiv.innerHTML = convertPokemonToDi(pokemon);
+          
+          // Adicione a div à nova tela ou ao elemento em tela cheia
+          // Neste exemplo, estamos adicionando à tela cheia
+          document.body.appendChild(pokemonDetailsDiv);
+      });
+  }
 });
+
 
 
 
