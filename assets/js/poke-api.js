@@ -59,6 +59,7 @@ pokeApi.getPokemonInfoByName = (pokemonName) => {
 
             // Obtenha as habilidades do Pokémon
             const abilities = pokemonData.abilities.map((abilityInfo) => abilityInfo.ability.name);
+            console.log('Habilidades: ', abilities);
 
             // Obtenha o nome da espécie
             const speciesUrl = pokemonData.species.url;

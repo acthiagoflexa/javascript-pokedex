@@ -1,33 +1,35 @@
-const pokemonList = document.getElementById('pokemonList')
-const loadMoreButton = document.getElementById('loadMoreButton')
-const contentPokemon = document.querySelector('.main'); // Use querySelector para obter a primeira seção com a classe "content"
-const content = document.querySelector('.content'); // Use querySelector para obter a primeira seção com a classe "content"
+const pokemonList = document.getElementById("pokemonList");
+const loadMoreButton = document.getElementById("loadMoreButton");
+const contentPokemon = document.querySelector(".main"); // Use querySelector para obter a primeira seção com a classe "content"
+const content = document.querySelector(".content"); // Use querySelector para obter a primeira seção com a classe "content"
 let currentSection = null;
 
-const maxRecords = 151
-const limit = 10
+const maxRecords = 151;
+const limit = 10;
 let offset = 0;
 
 function convertPokemonToLi(pokemon) {
-    return `
+  return `
         <li class="pokemon ${pokemon.type}">
             <span class="number">#${pokemon.number}</span>
             <span class="name ${pokemon.name}">${pokemon.name}</span>
 
             <div class="detail">
                 <ol class="types">
-                    ${pokemon.types.map((type) => `<li class="type ${type}">${type}</li>`).join('')}
+                    ${pokemon.types
+                      .map((type) => `<li class="type ${type}">${type}</li>`)
+                      .join("")}
                 </ol>
 
                 <img src="${pokemon.photo}"
                      alt="${pokemon.name}">
             </div>
         </li>
-    `
+    `;
 }
 
-function convertPokemonToDi(pokemon, id) {
-    return `
+function convertPokemonToDi(pokemon) {
+  return `
     <section class="content ${pokemon.types[0]}" >
     <header class="detailsHeader">
       <i class="fa fa-arrow-left" aria-hidden="true"></i>
@@ -35,71 +37,86 @@ function convertPokemonToDi(pokemon, id) {
     </header>
     <div class="detailsPokemon">
       <h1 class="name">${pokemon.name}</h1>
-      <p class="number">#${pokemon.number}</p>
+      <p id="number">#${pokemon.number}</p>
     </div>
     <div class="detail">
       <ol class="abilitys">
-        ${pokemon.types.map((type) => `<li class="type ${type}">${type}</li>`).join('')}
+        ${pokemon.types
+          .map((type) => `<li class="type ${type}">${type}</li>`)
+          .join("")}
       </ol>
     </div>
     <img class="buba" src="${pokemon.photo}" alt="${pokemon.name}" />
     <div class="abilitysContent">
+    <div class="column">
       <ul class="menu">
         <li class="folder">
           About
           <ul class="subFolder">
-            <li>Tipo</li>
-            <li>Altura</li>
-            <li>Lala</li>
-            <li>Papa</li>
+            <li>Espécie: ${capitalizeFirstLetter(pokemon.speciesName)}</li>
+            <li>Altura: ${pokemon.height}</li>
+            <li>Tamanho: ${pokemon.weight}</li>
           </ul>
         </li>
       </ul>
     </div>
+    <div class="column">
+      <ul class="menu">
+        <li class="folder">
+          Abilities
+          <ul class="subFolder">
+            ${pokemon.abilities
+              .map((abi) => `<li ${abi}">${abi}</li>`)
+              .join("")}
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
   </section>
-    `
+    `;
 }
 
 function loadPokemonItens(offset, limit) {
-    pokeApi.getPokemons(offset, limit).then((pokemons = []) => {
-        const newHtml = pokemons.map(convertPokemonToLi).join('')
-        console.log(newHtml)
-        pokemonList.innerHTML += newHtml
-    })
+  pokeApi.getPokemons(offset, limit).then((pokemons = []) => {
+    const newHtml = pokemons.map(convertPokemonToLi).join("");
+    console.log(newHtml);
+    pokemonList.innerHTML += newHtml;
+  });
 }
 
-loadPokemonItens(offset, limit)
+loadPokemonItens(offset, limit);
 
-loadMoreButton.addEventListener('click', () => {
-    offset += limit
-    const qtdRecordsWithNexPage = offset + limit
+loadMoreButton.addEventListener("click", () => {
+  offset += limit;
+  const qtdRecordsWithNexPage = offset + limit;
 
-    if (qtdRecordsWithNexPage >= maxRecords) {
-        const newLimit = maxRecords - offset
-        loadPokemonItens(offset, newLimit)
+  if (qtdRecordsWithNexPage >= maxRecords) {
+    const newLimit = maxRecords - offset;
+    loadPokemonItens(offset, newLimit);
 
-        loadMoreButton.parentElement.removeChild(loadMoreButton)
-    } else {
-        loadPokemonItens(offset, limit)
-    } 
-})
+    loadMoreButton.parentElement.removeChild(loadMoreButton);
+  } else {
+    loadPokemonItens(offset, limit);
+  }
+});
 
-document.addEventListener('click', (event) => {
+document.addEventListener("click", (event) => {
   const target = event.target;
 
   // Verifique se o alvo do clique é um Pokémon ou seu nome
-  const pokemon = target.closest('.pokemon');
-  const name = target.closest('.name');
+  const pokemon = target.closest(".pokemon");
+  const name = target.closest(".name");
 
   if (pokemon || name) {
     // Obtenha o nome do Pokémon clicado
     const clickedPokemon = pokemon || name;
-    const pokemonName = clickedPokemon.querySelector('.name').textContent;
+    const pokemonName = clickedPokemon.querySelector(".name").textContent;
 
     // Obtenha os detalhes do Pokémon pelo nome
     pokeApi.getPokemonInfoByName(pokemonName).then((pokemon) => {
       // Crie a div gerada pelo convertPokemonToDi
-      const pokemonDetailsDiv = document.createElement('div');
+      const pokemonDetailsDiv = document.createElement("div");
       pokemonDetailsDiv.innerHTML = convertPokemonToDi(pokemon);
 
       // Adicione a div à nova tela ou ao elemento em tela cheia
@@ -110,19 +127,21 @@ document.addEventListener('click', (event) => {
       currentPokemonDetails = pokemonDetailsDiv;
 
       // Ocultar a seção de conteúdo
-      contentPokemon.style.display = 'none';
+      contentPokemon.style.display = "none";
     });
-  } else if (target.classList.contains('fa-arrow-left') && currentPokemonDetails) {
+  } else if (
+    target.classList.contains("fa-arrow-left") &&
+    currentPokemonDetails
+  ) {
     // Remova a seção de detalhes do Pokémon
     currentPokemonDetails.remove();
     currentPokemonDetails = null;
 
     // Mostrar novamente a seção de conteúdo ao voltar
-    contentPokemon.style.display = 'block';
+    contentPokemon.style.display = "block";
   }
 });
 
-
-
-
-
+function capitalizeFirstLetter(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}

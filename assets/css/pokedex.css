@@ -163,3 +163,74 @@
         grid-template-columns: 1fr 1fr 1fr 1fr;
     }
 }
+
+.detailsHeader, .detailsPokemon{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content:space-between;
+    align-items: center;
+}
+
+.detailsPokemon{
+    margin: 0;
+    padding: 0;
+}
+.abilitys{
+    list-style: none;
+    display: flex;
+    justify-content:flex-start;
+    padding: 0;
+    margin-bottom: 0;
+    margin-top: 0;
+}
+
+.abilitys li{
+    color: #fff;
+    padding: .25rem .5rem;
+    margin: .25rem 0.10rem;
+    font-size: .625rem;
+    border-radius: 1rem;
+    filter: brightness(1.1);
+    text-align: center;
+}
+
+.buba{
+    width: 50%;
+    height: auto;
+    object-fit: cover;
+    display: block;
+    margin: 0 auto;
+}
+
+.abilitysContent {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Duas colunas de largura igual */
+    gap: 20px; /* Espaço entre as colunas */
+  }
+
+  .menu {
+    list-style: none;
+    padding: 0;
+  }
+
+.column {
+    width: 100%; /* Certifica-se de que cada coluna ocupe 100% da largura da div pai */
+}
+
+.subFolder{
+    list-style: none;
+    margin-top: 1rem;
+    padding: 0;
+    font-weight: 300;
+    text-align: center;
+    background-color: #f6f8fc;
+    height: 100%;
+    border-radius: 8px;
+}
+.subFolder li{
+    margin-bottom: 1rem;
+}
+
+.folder{
+    width: 100%;
+}
