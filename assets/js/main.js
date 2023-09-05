@@ -1,6 +1,8 @@
 const pokemonList = document.getElementById('pokemonList')
 const loadMoreButton = document.getElementById('loadMoreButton')
-const contentPokemon = document.getElementsByClassName('content')
+const contentPokemon = document.querySelector('.main'); // Use querySelector para obter a primeira seção com a classe "content"
+const content = document.querySelector('.content'); // Use querySelector para obter a primeira seção com a classe "content"
+let currentSection = null;
 
 const maxRecords = 151
 const limit = 10
@@ -10,7 +12,7 @@ function convertPokemonToLi(pokemon) {
     return `
         <li class="pokemon ${pokemon.type}">
             <span class="number">#${pokemon.number}</span>
-            <span class="name">${pokemon.name}</span>
+            <span class="name ${pokemon.name}">${pokemon.name}</span>
 
             <div class="detail">
                 <ol class="types">
@@ -24,7 +26,7 @@ function convertPokemonToLi(pokemon) {
     `
 }
 
-function convertPokemonToDi(pokemon) {
+function convertPokemonToDi(pokemon, id) {
     return `
     <section class="content ${pokemon.types[0]}" >
     <header class="detailsHeader">
@@ -79,33 +81,46 @@ loadMoreButton.addEventListener('click', () => {
         loadMoreButton.parentElement.removeChild(loadMoreButton)
     } else {
         loadPokemonItens(offset, limit)
-    }
+    } 
 })
 
 document.addEventListener('click', (event) => {
-  const clickedPokemon = event.target.closest('.pokemon');
-  if (clickedPokemon) {
-      // Obtenha o nome do Pokémon clicado
-      const pokemonName = clickedPokemon.querySelector('.name').textContent;
+  const target = event.target;
 
-      // Oculte a seção de conteúdo
-      const contentSection = document.querySelector('.content');
-      contentSection.style.display = 'none';
-      
-      // Obtenha os detalhes do Pokémon pelo nome
-      pokeApi.getPokemonInfoByName(pokemonName).then((pokemon) => {
-          // Crie a div gerada pelo convertPokemonToDi
-          console.log(pokemon);
-          const pokemonDetailsDiv = document.createElement('div');
-          pokemonDetailsDiv.innerHTML = convertPokemonToDi(pokemon);
-          
-          // Adicione a div à nova tela ou ao elemento em tela cheia
-          // Neste exemplo, estamos adicionando à tela cheia
-          document.body.appendChild(pokemonDetailsDiv);
-      });
+  // Verifique se o alvo do clique é um Pokémon ou seu nome
+  const pokemon = target.closest('.pokemon');
+  const name = target.closest('.name');
+
+  if (pokemon || name) {
+    // Obtenha o nome do Pokémon clicado
+    const clickedPokemon = pokemon || name;
+    const pokemonName = clickedPokemon.querySelector('.name').textContent;
+
+    // Obtenha os detalhes do Pokémon pelo nome
+    pokeApi.getPokemonInfoByName(pokemonName).then((pokemon) => {
+      // Crie a div gerada pelo convertPokemonToDi
+      const pokemonDetailsDiv = document.createElement('div');
+      pokemonDetailsDiv.innerHTML = convertPokemonToDi(pokemon);
+
+      // Adicione a div à nova tela ou ao elemento em tela cheia
+      // Neste exemplo, estamos adicionando à body
+      document.body.appendChild(pokemonDetailsDiv);
+
+      // Atribua a nova seção à variável currentPokemonDetails
+      currentPokemonDetails = pokemonDetailsDiv;
+
+      // Ocultar a seção de conteúdo
+      contentPokemon.style.display = 'none';
+    });
+  } else if (target.classList.contains('fa-arrow-left') && currentPokemonDetails) {
+    // Remova a seção de detalhes do Pokémon
+    currentPokemonDetails.remove();
+    currentPokemonDetails = null;
+
+    // Mostrar novamente a seção de conteúdo ao voltar
+    contentPokemon.style.display = 'block';
   }
 });
-
 
 
 
